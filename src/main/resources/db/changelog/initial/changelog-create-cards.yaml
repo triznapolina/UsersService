@@ -1,0 +1,93 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-paymentCards
+      author: polina_tr
+
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: payment_cards
+
+      changes:
+        - createTable:
+            tableName: payment_cards
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: holder
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: number
+                  type: char(16)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: expiration_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastUpdated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: payment_cards
+            referencedColumnNames: id
+            referencedTableName: users
+            constraintName: fk_user_card
+
+        - createIndex:
+            indexName: idx_paymentCards_holder
+            tableName: payment_cards
+            columns:
+              - column:
+                  name: holder
+        - createIndex:
+            indexName: idx_paymentCards_number
+            tableName: payment_cards
+            columns:
+              - column:
+                  name: number
+        - createIndex:
+            indexName: idx_paymentCards_expirationDate
+            tableName: payment_cards
+            columns:
+              - column:
+                  name: expiration_date
+        - createIndex:
+            indexName: idx_paymentsCards_users_id
+            tableName: payment_cards
+            columns:
+              - column:
+                  name: user_id
