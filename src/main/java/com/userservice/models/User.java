@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -40,6 +41,11 @@ public class User {
     @LastModifiedDate
     @Column(name = "lastUpdated_at")
     private LocalDateTime updatedAT;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentCard> cards;
+
 
 
 }
