@@ -7,10 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserSpecification {
 
-    public Specification<User> build(User params) {
-        return withFirstName(params.getFirstName())
-                .and(withSurname(params.getSurname()));
-    }
 
     private Specification<User> withFirstName(String firstName) {
         return (root, query, cb) ->
