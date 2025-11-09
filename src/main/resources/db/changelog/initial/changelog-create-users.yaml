@@ -1,0 +1,76 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-users
+      author: polina_tr
+
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+           - tableExists:
+               tableName: users
+
+
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: firstName
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birth_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: active
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastUpdated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: idx_user_surname
+            tableName: users
+            columns:
+              - column:
+                  name: surname
+        - createIndex:
+            indexName: idx_compound_user
+            tableName: users
+            columns:
+              - column:
+                  name: firstName
+              - column:
+                  name: surname
