@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 public class UserSpecification {
 
     public static Specification<User> hasFirstName(String firstName) {
-        return (root, query, cb) -> cb.equal(root.get("firstName"), firstName);
+        return (root, query, cb) ->
+                cb.equal(root.get("firstName"), firstName);
 
     }
 
-    private static Specification<User> hasSurname(String surname) {
-        return (root, query, cb) -> cb.equal(root.get("surname"), surname);
+    public static Specification<User> hasSurname(String surname) {
+        return (root, query, cb) ->
+                cb.equal(root.get("surname"), surname);
     }
 
 

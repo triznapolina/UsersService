@@ -2,11 +2,15 @@ package com.userservice.models;
 
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "payment_cards")
+@Getter
+@Setter
 public class PaymentCard extends AuditFieldsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
