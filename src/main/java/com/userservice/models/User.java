@@ -2,11 +2,20 @@ package com.userservice.models;
 
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class User extends AuditFieldsEntity {
 
     @Id
@@ -28,5 +37,7 @@ public class User extends AuditFieldsEntity {
     @Column(name = "active")
     private Boolean active;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentCard> cards;
 
 }

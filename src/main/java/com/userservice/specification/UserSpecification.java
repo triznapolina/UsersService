@@ -12,7 +12,7 @@ public class UserSpecification {
 
     }
 
-    private static Specification<User> hasSurname(String surname) {
+    public static Specification<User> hasSurname(String surname) {
         return (root, query, cb) -> cb.equal(root.get("surname"), surname);
     }
 

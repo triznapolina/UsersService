@@ -18,14 +18,13 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
 
     PaymentCard findByHolder(String holder);
 
-    List<PaymentCard> findAllCardByUser(User user);
-
-    PaymentCard findByNumber(String number);
-
     Page<PaymentCard> viewAllCards(Pageable pageable);
 
     @Modifying
     @Query("update PaymentCard c set c.active = :active where c.id = :cardId")
     int setStatusOfActivity(@Param("cardId") Long cardId, @Param("active") boolean active);
+
+    @Query("select c from PaymentCard c where c.user.id = :userId")
+    List<PaymentCard> findAllCardsByUserId(@Param("userId") Long userId);
 
 }
