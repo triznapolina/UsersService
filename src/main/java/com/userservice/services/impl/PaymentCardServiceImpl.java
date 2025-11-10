@@ -22,13 +22,13 @@ import java.util.List;
 public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Autowired
-    public PaymentCardRepository paymentCardRepository;
+    private PaymentCardRepository paymentCardRepository;
 
     @Autowired
-    public PaymentCardMapper paymentCardMapper;
+    private PaymentCardMapper paymentCardMapper;
 
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
 
 
     @Override

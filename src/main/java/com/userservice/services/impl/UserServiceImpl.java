@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public UserMapper userMapper;
+    private UserMapper userMapper;
 
 
     @Override
