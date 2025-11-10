@@ -10,6 +10,9 @@ import com.userservice.services.PaymentCardService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +53,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CachePut(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDTO updateCard(PaymentCardDTO paymentCardDTO, long id) {
 
@@ -65,16 +72,26 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CacheEvict(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public void deleteCard(long id) {
         paymentCardRepository.deleteById(id);
     }
 
+
+    @Cacheable(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDTO findById(Long id) {
         return paymentCardMapper.convertToDTO(paymentCardRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("This card is not found")));
     }
+
 
     @Transactional
     @Override
@@ -82,17 +99,16 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         paymentCardRepository.setStatusOfActivity(Id, active);
     }
 
-
+    @Cacheable(
+            value = "card",
+            key = "#userId"
+    )
     @Override
     public List<PaymentCard> getCardsByUserId(Long userId) {
        return paymentCardRepository.findAllCardsByUserId(userId);
 
     }
 
-    @Override
-    public PaymentCard getCardByNumber(String number) {
-        return paymentCardRepository.findByNumber(number);
-    }
 
     @Override
     public PaymentCard getCardByHolder(String holder) {

@@ -24,8 +24,6 @@ public interface PaymentCardService {
     List<PaymentCard> getCardsByUserId(Long userId);
 
 
-    PaymentCard getCardByNumber(String number);
-
     PaymentCard getCardByHolder(String holder);
 
     Page<PaymentCard> getCardsAll(int pageNo, int pageSize);

@@ -178,16 +178,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/cards/number")
-    public ResponseEntity<PaymentCard> getCardByNumber(@RequestParam String number) {
-        PaymentCard card = paymentCardService.getCardByNumber(number);
-        if (card != null) {
-            return ResponseEntity.ok(card);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
     @GetMapping("/cards/holder")
     public ResponseEntity<PaymentCard> getCardByHolder(@RequestParam String holder) {
         PaymentCard card = paymentCardService.getCardByHolder(holder);

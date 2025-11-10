@@ -18,8 +18,6 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
 
     PaymentCard findByHolder(String holder);
 
-    PaymentCard findByNumber(String number);
-
     Page<PaymentCard> viewAllCards(Pageable pageable);
 
     @Modifying
