@@ -4,12 +4,16 @@ import com.userservice.mappers.PaymentCardMapper;
 import com.userservice.models.PaymentCard;
 import com.userservice.models.User;
 import com.userservice.models.dto.PaymentCardDTO;
+import com.userservice.models.dto.UserDTO;
 import com.userservice.repositories.PaymentCardRepository;
 import com.userservice.repositories.UserRepository;
 import com.userservice.services.PaymentCardService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +61,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CachePut(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDTO updateCard(PaymentCardDTO paymentCardDTO, long id) {
 
@@ -72,11 +80,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CacheEvict(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public void deleteCard(long id) {
         paymentCardRepository.deleteById(id);
     }
 
+
+    @Cacheable(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDTO findById(Long id) {
         return paymentCardMapper.convertToDTO(paymentCardRepository.findById(id).orElseThrow(()
@@ -90,6 +107,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
 
+    @Cacheable(
+            value = "card",
+            key = "#user.id"
+    )
     @Override
     public List<PaymentCard> findAllByUser(User user) {
         return paymentCardRepository.findAllByUser(user);

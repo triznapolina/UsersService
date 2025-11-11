@@ -8,6 +8,9 @@ import com.userservice.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +42,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @CachePut(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public UserDTO updateUser(UserDTO userDTO, Long id) {
         User user = userRepository.findById(id)
@@ -53,6 +60,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
+    @CacheEvict(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public void deleteUser(Long id) {
         User choosenUser = userRepository.findById(id).orElseThrow(() ->
@@ -61,6 +72,10 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Cacheable(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public UserDTO getUserById(Long id) {
         return userMapper.convertToDTO(userRepository.findById(id).orElseThrow(()
