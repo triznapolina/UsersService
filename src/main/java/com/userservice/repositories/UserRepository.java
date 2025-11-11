@@ -16,8 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-    Page<User> findAll(Pageable pageable);
-
     @Query("select count(c) from PaymentCard c where c.user.id = :userId")
     long countCardsByUserId(@Param("userId") Long userId);
 

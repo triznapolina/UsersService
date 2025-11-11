@@ -17,8 +17,6 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
 
     List<PaymentCard> findAllByUser(User user);
 
-    Page<PaymentCard> findAll(Pageable pageable);
-
     PaymentCard findByHolderOrNumber(String holder, String number);
 
     @Modifying
