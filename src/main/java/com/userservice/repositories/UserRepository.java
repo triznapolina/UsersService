@@ -1,5 +1,6 @@
 package com.userservice.repositories;
 
+import com.userservice.models.PaymentCard;
 import com.userservice.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-    Page<User> viewAllUsers(Pageable pageable);
+    Page<User> findAll(Pageable pageable);
 
     @Query("select count(c) from PaymentCard c where c.user.id = :userId")
     long countCardsByUserId(@Param("userId") Long userId);

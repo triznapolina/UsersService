@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserSpecification {
 
-    public static Specification<User> hasFirstName(String firstName) {
+    private static Specification<User> hasFirstName(String firstName) {
         return (root, query, cb) -> cb.equal(root.get("firstName"), firstName);
 
     }

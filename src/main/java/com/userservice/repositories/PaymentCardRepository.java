@@ -15,17 +15,15 @@ import java.util.List;
 @Repository
 public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
 
+    List<PaymentCard> findAllByUser(User user);
 
-    PaymentCard findByHolder(String holder);
+    Page<PaymentCard> findAll(Pageable pageable);
 
-    List<PaymentCard> findAllCardByUser(User user);
-
-    PaymentCard findByNumber(String number);
-
-    Page<PaymentCard> viewAllCards(Pageable pageable);
+    PaymentCard findByHolderOrNumber(String holder, String number);
 
     @Modifying
     @Query("update PaymentCard c set c.active = :active where c.id = :cardId")
     int setStatusOfActivity(@Param("cardId") Long cardId, @Param("active") boolean active);
+
 
 }
