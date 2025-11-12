@@ -1,4 +1,4 @@
-package com.userservice.models;
+package com.userservice.entity;
 
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;

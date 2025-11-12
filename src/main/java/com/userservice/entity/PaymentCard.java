@@ -1,6 +1,5 @@
-package com.userservice.models;
+package com.userservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
 import lombok.*;

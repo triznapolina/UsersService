@@ -1,9 +1,7 @@
-package com.userservice.repositories;
+package com.userservice.repository;
 
-import com.userservice.models.PaymentCard;
-import com.userservice.models.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.userservice.entity.PaymentCard;
+import com.userservice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,8 +14,6 @@ import java.util.List;
 public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
 
     List<PaymentCard> findAllByUser(User user);
-
-    Page<PaymentCard> findAll(Pageable pageable);
 
     PaymentCard findByHolderOrNumber(String holder, String number);
 
