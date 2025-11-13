@@ -1,0 +1,35 @@
+services:
+  appServiceUser:
+    build: .
+    container_name: userService
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - db
+      - redis
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+
+  db:
+    image: postgres:16
+    restart: always
+    container_name: db_users
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: usersDB
+
+  redis:
+    image: redis:5.0.3-alpine
+    restart: always
+    container_name: redis_users
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:
