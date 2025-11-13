@@ -1,9 +1,10 @@
-package com.userservice.service.impl;
+package com.userservice.unitTests.service.impl;
 
 import com.userservice.mapper.UserMapper;
 import com.userservice.entity.User;
 import com.userservice.entity.dto.UserDTO;
 import com.userservice.repository.UserRepository;
+import com.userservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
