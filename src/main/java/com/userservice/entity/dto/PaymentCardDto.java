@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentCardDTO {
+public class PaymentCardDto {
 
     private Long id;
 

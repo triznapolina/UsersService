@@ -22,4 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     int setStatusOfActivity(@Param("userId") Long userId, @Param("active") boolean active);
 
 
+    boolean existsUserByEmail(String email);
 }
