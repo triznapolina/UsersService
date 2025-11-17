@@ -3,7 +3,7 @@ package com.userservice.service;
 
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.User;
-import com.userservice.entity.dto.PaymentCardDTO;
+import com.userservice.entity.dto.PaymentCardDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -11,13 +11,13 @@ import java.util.List;
 public interface PaymentCardService {
 
 
-    PaymentCardDTO createCard(PaymentCardDTO paymentCardDTO, long userId);
+    PaymentCardDto createCard(PaymentCardDto paymentCardDTO, long userId);
 
-    PaymentCardDTO updateCard(PaymentCardDTO paymentCardDTO, long id);
+    PaymentCardDto updateCard(PaymentCardDto paymentCardDTO, long id);
 
     void deleteCard(long id);
 
-    PaymentCardDTO findById(Long id);
+    PaymentCardDto findById(Long id);
 
 
     void activateDeactivatePaymentCard(Long Id, boolean active);

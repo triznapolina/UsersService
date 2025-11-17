@@ -3,7 +3,8 @@ package com.userservice.service.impl;
 
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.User;
-import com.userservice.entity.dto.PaymentCardDTO;
+import com.userservice.entity.dto.PaymentCardDto;
+import com.userservice.exception.AlreadyExistsException;
 import com.userservice.mapper.PaymentCardMapper;
 import com.userservice.repository.PaymentCardRepository;
 import com.userservice.repository.UserRepository;
@@ -28,7 +29,6 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     private final UserRepository userRepository;
 
 
-    @Autowired
     public PaymentCardServiceImpl (PaymentCardRepository paymentCardRepository,
                                    PaymentCardMapper paymentCardMapper,
                                    UserRepository userRepository) {
@@ -38,13 +38,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
 
-
     @Override
-    public PaymentCardDTO createCard(PaymentCardDTO paymentCardDTO, long userId) {
+    public PaymentCardDto createCard(PaymentCardDto paymentCardDTO, long userId) {
 
         long count = userRepository.countCardsByUserId(userId);
-        if (count >= 5) {
-            throw new RuntimeException("The user's card limit has been exceeded");
+        if (count > 5) {
+            throw new AlreadyExistsException("The user's card limit has been exceeded");
         }
 
         User user = userRepository.findById(userId).orElseThrow(()
@@ -59,7 +58,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Transactional
     @Override
-    public PaymentCardDTO updateCard(PaymentCardDTO paymentCardDTO, long id) {
+    public PaymentCardDto updateCard(PaymentCardDto paymentCardDTO, long id) {
 
         PaymentCard card = paymentCardRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("This card is not found"));
@@ -79,8 +78,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         paymentCardRepository.deleteById(id);
     }
 
+
+    @Transactional
     @Override
-    public PaymentCardDTO findById(Long id) {
+    public PaymentCardDto findById(Long id) {
         return paymentCardMapper.convertToDTO(paymentCardRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("This card is not found")));
     }
@@ -91,17 +92,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         paymentCardRepository.setStatusOfActivity(Id, active);
     }
 
+    @Transactional
     @Override
     public List<PaymentCard> findAllByUser(User user) {
         return paymentCardRepository.findAllByUser(user);
     }
 
 
+    @Transactional
     @Override
     public PaymentCard findByHolderOrNumber(String holder, String number) {
         return paymentCardRepository.findByHolderOrNumber(holder, number);
     }
 
+    @Transactional
     @Override
     public Page<PaymentCard> getCardsOnPage(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);

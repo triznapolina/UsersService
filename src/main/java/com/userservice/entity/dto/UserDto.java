@@ -1,8 +1,6 @@
 package com.userservice.entity.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserDto {
 
     private Long id;
 
@@ -28,4 +26,6 @@ public class UserDTO {
 
     @NotNull(message = "You must specify the date of birth")
     private LocalDate birthDate;
+
+
 }

@@ -2,7 +2,7 @@ package com.userservice.service.impl;
 
 
 import com.userservice.entity.User;
-import com.userservice.entity.dto.UserDTO;
+import com.userservice.entity.dto.UserDto;
 import com.userservice.mapper.UserMapper;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.UserService;
@@ -26,15 +26,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Autowired
+
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
 
+    @Transactional
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDto createUser(UserDto userDTO) {
         User user = userMapper.convertToEntity(userDTO);
         user.setActive(true);
         user = userRepository.save(user);
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO updateUser(UserDTO userDTO, Long id) {
+    public UserDto updateUser(UserDto userDTO, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("This user is not found"));
         user.setFirstName(userDTO.getFirstName());
@@ -64,8 +65,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserDto getUserById(Long id) {
         return userMapper.convertToDTO(userRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("This user is not found")));
     }
@@ -77,6 +79,8 @@ public class UserServiceImpl implements UserService {
         userRepository.setStatusOfActivity(id, active);
     }
 
+
+    @Transactional
     @Override
     public Page<User> findUsers(String firstName, String surname, Pageable pageable) {
         Specification<User> spec = hasFirstName(firstName).and(hasSurname(surname));
@@ -84,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
+    @Transactional
     @Override
     public Page<User> getUsersOnPage(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
