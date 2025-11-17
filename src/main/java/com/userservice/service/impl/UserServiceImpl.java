@@ -2,13 +2,13 @@ package com.userservice.service.impl;
 
 
 import com.userservice.entity.User;
-import com.userservice.entity.dto.UserDTO;
+import com.userservice.entity.dto.UserDto;
+import com.userservice.exception.AlreadyExistsException;
+import com.userservice.exception.ResourceNotFoundException;
 import com.userservice.mapper.UserMapper;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,16 +29,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Autowired
+
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
-
+    @Transactional
+    @CachePut(
+            value= "user",
+            key= "#userDto.id")
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = userMapper.convertToEntity(userDTO);
+    public UserDto createUser(UserDto userDto) {
+
+        if (userRepository.existsUserByEmail((userDto.getEmail()))) {
+            throw new AlreadyExistsException("User with email=" + userDto.getEmail() + " is already exists");
+        }
+
+        User user = userMapper.convertToEntity(userDto);
         user.setActive(true);
         user = userRepository.save(user);
         return userMapper.convertToDTO(user);
@@ -50,9 +58,10 @@ public class UserServiceImpl implements UserService {
             key = "#id"
     )
     @Override
-    public UserDTO updateUser(UserDTO userDTO, Long id) {
+    public UserDto updateUser(UserDto userDTO, Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("This user is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id="+ id + " is not found"));
+
         user.setFirstName(userDTO.getFirstName());
         user.setSurname(userDTO.getSurname());
         user.setEmail(userDTO.getEmail());
@@ -70,28 +79,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         User choosenUser = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("This user is not found"));
+                new ResourceNotFoundException("User with id="+ id + " is not found"));
         userRepository.delete(choosenUser);
 
     }
 
+    @Transactional
+    @Override
+    public boolean findByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
+    }
+
+    @Transactional
     @Cacheable(
             value = "user",
             key = "#id"
     )
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserDto getUserById(Long id) {
         return userMapper.convertToDTO(userRepository.findById(id).orElseThrow(()
-                -> new EntityNotFoundException("This user is not found")));
+                -> new ResourceNotFoundException("User with id="+ id + " is not found")));
     }
 
 
     @Transactional
+    @CachePut(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public void activateDeactivateUser(Long id, boolean active) {
         userRepository.setStatusOfActivity(id, active);
     }
 
+    @Transactional
     @Override
     public Page<User> findUsers(String firstName, String surname, Pageable pageable) {
         Specification<User> spec = hasFirstName(firstName).and(hasSurname(surname));
@@ -100,6 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Transactional
     @Override
     public Page<User> getUsersOnPage(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);

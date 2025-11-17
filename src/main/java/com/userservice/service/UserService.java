@@ -1,21 +1,22 @@
 package com.userservice.service;
 
 import com.userservice.entity.User;
-import com.userservice.entity.dto.UserDTO;
+import com.userservice.entity.dto.UserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
 public interface UserService {
 
-    UserDTO createUser(UserDTO userDTO);
+    UserDto createUser(UserDto userDTO);
 
-    UserDTO updateUser(UserDTO userDTO, Long id);
+    UserDto updateUser(UserDto userDTO, Long id);
 
     void deleteUser(Long id);
 
+    boolean findByEmail(String email);
 
-    UserDTO getUserById(Long id);
+    UserDto getUserById(Long id);
 
     void activateDeactivateUser(Long id, boolean active);
 

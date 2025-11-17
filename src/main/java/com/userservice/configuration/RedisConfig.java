@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 import java.time.Duration;
+import java.util.Objects;
 
 @Configuration
 @EnableCaching
@@ -25,11 +26,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        String host = env.getProperty("REDIS_HOST", "localhost");
-        String portStr = env.getProperty("REDIS_PORT", "6379");
-        int port = Integer.parseInt(portStr);
-        return new LettuceConnectionFactory(host, port);
+    public LettuceConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisConf = new RedisStandaloneConfiguration();
+        redisConf.setHostName(Objects.requireNonNull(env.getProperty("REDIS_HOST")));
+        redisConf.setPort(Integer.parseInt(Objects.requireNonNull(env.getProperty("REDIS_PORT"))));
+        return new LettuceConnectionFactory(redisConf);
     }
 
     @Bean

@@ -2,7 +2,7 @@ package com.userservice.mapper;
 
 
 import com.userservice.entity.PaymentCard;
-import com.userservice.entity.dto.PaymentCardDTO;
+import com.userservice.entity.dto.PaymentCardDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
@@ -10,9 +10,9 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PaymentCardMapper {
 
-    PaymentCardDTO convertToDTO(PaymentCard paymentCard);
+    PaymentCardDto convertToDTO(PaymentCard paymentCard);
 
-    PaymentCard convertToEntity(PaymentCardDTO paymentCardResponseDTO);
+    PaymentCard convertToEntity(PaymentCardDto paymentCardResponseDTO);
 
 
 }
