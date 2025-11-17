@@ -10,7 +10,6 @@ import com.userservice.mapper.PaymentCardMapper;
 import com.userservice.repository.PaymentCardRepository;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.PaymentCardService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;

@@ -35,5 +35,4 @@ public class PaymentCard extends AuditFieldsEntity {
     private User user;
 
 
-
 }
