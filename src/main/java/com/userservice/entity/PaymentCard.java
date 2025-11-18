@@ -4,6 +4,7 @@ import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.time.LocalDate;
 
 @Entity
@@ -32,7 +33,6 @@ public class PaymentCard extends AuditFieldsEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 
 
 }
