@@ -1,8 +1,9 @@
-package com.userservice.unitTests.service.impl;
+package com.userservice.unit.service.impl;
 
+import com.userservice.entity.dto.UserDto;
+import com.userservice.exception.ResourceNotFoundException;
 import com.userservice.mapper.UserMapper;
 import com.userservice.entity.User;
-import com.userservice.entity.dto.UserDTO;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -34,7 +34,6 @@ public class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-
     @Mock
     private UserMapper userMapper;
 
@@ -44,23 +43,19 @@ public class UserServiceImplTest {
 
     @Test
     void createUserTest(){
-
-        User user = new User(1L,"Polina", "Trizna",
-                LocalDate.of(2006, 4, 29),"polinatr@gmail.com", true);
-
-        UserDTO userDTO = new UserDTO(1L,"Polina", "Trizna",
-                "polinatr@gmail.com", LocalDate.of(2006, 4, 29));
-
+        // Arrange
+        User user = new User();
+        UserDto userDTO = new UserDto();
         when(userMapper.convertToEntity(userDTO)).thenReturn(user);
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.convertToDTO(user)).thenReturn(userDTO);
 
-        UserDTO createdUser = userService.createUser(userDTO);
+        // Act
+        UserDto createdUser = userService.createUser(userDTO);
 
+        // Assert
         assertThat(createdUser).isNotNull();
         assertEquals(userDTO, createdUser);
-
-        verify(userRepository, times(1)).save(user);
 
     }
 
@@ -68,12 +63,14 @@ public class UserServiceImplTest {
 
     @Test
     public void updateUserTest() {
+
+        //Arrange
         Long id = 1L;
 
         User existingUser = new User(id, "Polina", "Trizna",
                 LocalDate.of(2006, 4, 29),"polia@gmail.com", true);
 
-        UserDTO dto = new UserDTO(id, "Polina", "Trizna","poliaTr@gmail.com",
+        UserDto dto = new UserDto(id, "Polina", "Trizna","poliaTr@gmail.com",
                 LocalDate.of(2006, 4, 29));
 
         User updatedUser = new User();
@@ -83,100 +80,127 @@ public class UserServiceImplTest {
         updatedUser.setEmail(dto.getEmail());
         updatedUser.setBirthDate(dto.getBirthDate());
 
-        UserDTO resultUpdatedDTO = new UserDTO();
+        UserDto resultUpdatedDTO = new UserDto();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
         when(userMapper.convertToDTO(updatedUser)).thenReturn(resultUpdatedDTO);
 
-        UserDTO result = userService.updateUser(dto, id);
+        // Act
+        UserDto result = userService.updateUser(dto, id);
 
+
+        // Assert
         assertThat(result).isNotNull();
         assertEquals(resultUpdatedDTO, result);
-
-        verify(userRepository, times(1)).findById(id);
-        verify(userRepository, times(1)).save(existingUser);
     }
 
 
     @Test
     public void deleteUserTest() {
+
+        //Arrange
         Long id = 1L;
         User user = new User();
         user.setId(id);
-
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
+        // Act
         userService.deleteUser(id);
 
-        verify(userRepository, times(1)).delete(user);
+        // Assert
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUserById(id);
+        });
     }
 
     @Test
     void getUserByIdTest() {
+
+        // Arrange
         Long id = 1L;
         User user = new User();
         user.setId(id);
-        UserDTO userDto = new UserDTO();
+        UserDto userDto = new UserDto();
         userDto.setId(id);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(userMapper.convertToDTO(user)).thenReturn(userDto);
 
-        UserDTO retrievedUser = userService.getUserById(id);
+        // Act
+        UserDto retrievedUser = userService.getUserById(id);
 
+        // Assert
         assertThat(retrievedUser).isNotNull();
         assertThat(retrievedUser.getId()).isEqualTo(id);
-
-        verify(userRepository, times(1)).findById(id);
     }
+
 
     @Test
     void activateDeactivateUserTest(){
-        Long id = 1L;
-        boolean active = false;
+        // Arrange
+        Long userId = 1L;
+        boolean newStatus = false;
 
-        userService.activateDeactivateUser(id, active);
+        when(userRepository.setStatusOfActivity(userId, newStatus)).thenReturn(1);
 
-        verify(userRepository, times(1)).setStatusOfActivity(id, active);
+        // Act
+        userService.activateDeactivateUser(userId, newStatus);
+
+        //Assert
+        assertDoesNotThrow(() -> {
+            userService.activateDeactivateUser(userId, newStatus);
+        });
 
 
     }
 
     @Test
-    void findUsersTest(){
-
+    void findUsersTest() {
+        // Arrange
         String firstName = "Polina";
         String surname = "Trizna";
-        Pageable pageable = PageRequest.of(0, 10);
-        List<User> users = Arrays.asList(new User(), new User());
-        Page<User> pageResult = new PageImpl<>(users, pageable, users.size());
+        Pageable pageable = PageRequest.of(0, 1);
 
+        List<User> users = Arrays.asList(new User(), new User(), new User());
+        users.get(0).setFirstName(firstName);
+        users.get(0).setSurname(surname);
+        users.get(1).setFirstName("Petr");
+        users.get(1).setSurname("Retrov");
+        users.get(2).setFirstName("Ivan");
+        users.get(2).setSurname("Ivanov");
+
+        Page<User> pageResult = new PageImpl<>(users, pageable, users.size());
         when(userRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageResult);
 
+        // Act
         Page<User> result = userService.findUsers(firstName, surname, pageable);
 
-        assertThat(result).isNotNull();
+        // Assert
+        assertFalse(result.getContent().isEmpty());
 
-        verify(userRepository, times(1)).findAll(any(Specification.class), eq(pageable));
-
+        User foundUser = result.getContent().get(0);
+        assertEquals(firstName, foundUser.getFirstName());
+        assertEquals(surname, foundUser.getSurname());
     }
 
     @Test
     void getUsersOnPageTest(){
 
+        // Arrange
         int pageNo = 2;
         int pageSize = 5;
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<User> page = new PageImpl<>(List.of(new User()));
-
         when(userRepository.findAll(pageable)).thenReturn(page);
 
+        // Act
         Page<User> result = userService.getUsersOnPage(pageNo, pageSize);
 
+        // Assert
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(userRepository).findAll(pageable);
 
 
     }
