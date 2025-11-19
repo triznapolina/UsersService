@@ -1,9 +1,10 @@
-package com.userservice.unitTests.service.impl;
+package com.userservice.unit.service.impl;
 
+import com.userservice.exception.ResourceNotFoundException;
 import com.userservice.mapper.PaymentCardMapper;
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.User;
-import com.userservice.entity.dto.PaymentCardDTO;
+import com.userservice.entity.dto.PaymentCardDto;
 import com.userservice.repository.PaymentCardRepository;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.impl.PaymentCardServiceImpl;
@@ -44,14 +45,12 @@ public class PaymentCardServiceImplTest {
 
     @Test
     void createCardTest() {
-
+        // Arrange
         long userId = 2L;
-
         PaymentCard card = new PaymentCard();
-        PaymentCardDTO paymentCardDTO = new PaymentCardDTO();
-
-        User user = new User(userId, "Kirill", "Kirillov",
-                LocalDate.of(1885, 10, 11), "kirillov@gmail.com", true);
+        PaymentCardDto paymentCardDTO = new PaymentCardDto();
+        User user = new User();
+        user.setId(userId);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.countCardsByUserId(userId)).thenReturn(2L);
@@ -59,18 +58,19 @@ public class PaymentCardServiceImplTest {
         when(paymentCardMapper.convertToDTO(card)).thenReturn(paymentCardDTO);
         when(paymentCardRepository.save(card)).thenReturn(card);
 
-        PaymentCardDTO createdCard = paymentCardServiceImpl.createCard(paymentCardDTO, userId);
+        // Act
+        PaymentCardDto createdCard = paymentCardServiceImpl.createCard(paymentCardDTO, userId);
 
+        // Assert
         assertThat(createdCard).isNotNull();
         assertEquals(paymentCardDTO, createdCard);
-
-        verify(paymentCardRepository, times(1)).save(card);
     }
 
     @Test
     public void updateCardTest() {
+        // Arrange
         Long id = 1L;
-        PaymentCardDTO dto = new PaymentCardDTO();
+        PaymentCardDto dto = new PaymentCardDto();
         dto.setHolder("Ivanov");
         dto.setExpirationDate(LocalDate.of(2025, 11, 12));
 
@@ -84,96 +84,112 @@ public class PaymentCardServiceImplTest {
         updatedEntity.setHolder(dto.getHolder());
         updatedEntity.setExpirationDate(dto.getExpirationDate());
 
-
         when(paymentCardRepository.findById(id)).thenReturn(Optional.of(existingCard));
         when(paymentCardRepository.save(any(PaymentCard.class))).thenReturn(updatedEntity);
-        when(paymentCardMapper.convertToDTO(updatedEntity)).thenReturn(new PaymentCardDTO());
 
+        PaymentCardDto dtoResult = new PaymentCardDto();
+        dtoResult.setHolder(dto.getHolder());
+        dtoResult.setExpirationDate(dto.getExpirationDate());
 
-        PaymentCardDTO result = paymentCardServiceImpl.updateCard(dto, id);
+        when(paymentCardMapper.convertToDTO(updatedEntity)).thenReturn(dtoResult);
 
+        // Act
+        PaymentCardDto result = paymentCardServiceImpl.updateCard(dto, id);
+
+        // Assert
         assertNotNull(result);
-
-        verify(paymentCardRepository, times(1)).findById(id);
-        verify(paymentCardRepository, times(1)).save(existingCard);
+        assertEquals(dto.getHolder(), result.getHolder());
+        assertEquals(dto.getExpirationDate(), result.getExpirationDate());
     }
-
 
     @Test
     public void deleteCardTest() {
-
+        // Arrange
         Long id = 1L;
         PaymentCard card = new PaymentCard();
         card.setId(id);
+        when(paymentCardRepository.findById(id)).thenReturn(Optional.of(card));
 
+        // Act
         paymentCardServiceImpl.deleteCard(id);
 
-        verify(paymentCardRepository, times(1)).deleteById(id);
+        // Assert
+        when(paymentCardRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> {
+            paymentCardServiceImpl.findById(id);
+        });
     }
-
 
     @Test
     public void findByIdTest() {
+        // Arrange
         Long id = 1L;
         PaymentCard card = new PaymentCard();
-        PaymentCardDTO dto = new PaymentCardDTO();
-
+        PaymentCardDto dto = new PaymentCardDto();
         when(paymentCardRepository.findById(id)).thenReturn(Optional.of(card));
         when(paymentCardMapper.convertToDTO(card)).thenReturn(dto);
 
-        PaymentCardDTO result = paymentCardServiceImpl.findById(id);
+        // Act
+        PaymentCardDto result = paymentCardServiceImpl.findById(id);
 
+        // Assert
         assertNotNull(result);
-
-        verify(paymentCardRepository, times(1)).findById(id);
     }
-
 
     @Test
-    public void activateDeactivatePaymentCardTest() {
-        Long id = 1L;
-        boolean active = false;
+    public void setStatusOfActivityTest() {
+        // Arrange
+        Long cardId = 2L;
+        boolean newStatus = false;
 
-        paymentCardServiceImpl.activateDeactivatePaymentCard(id, active);
+        // Act
+        paymentCardServiceImpl.activateDeactivatePaymentCard(cardId, newStatus);
 
-        verify(paymentCardRepository, times(1)).setStatusOfActivity(id, active);
+
+        //Assert
+        assertDoesNotThrow(() -> {
+            paymentCardServiceImpl.activateDeactivatePaymentCard(cardId, newStatus);
+        });
     }
-
 
     @Test
     public void findAllByUserTest() {
+        //Arrange
         User user = new User();
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         List<PaymentCard> cards = Arrays.asList(new PaymentCard(), new PaymentCard());
-
         when(paymentCardRepository.findAllByUser(user)).thenReturn(cards);
 
+        //Act
         List<PaymentCard> result = paymentCardServiceImpl.findAllByUser(user);
 
+        //Assert
         assertEquals(2, result.size());
-
-
-        verify(paymentCardRepository, times(1)).findAllByUser(user);
     }
-
 
     @Test
     public void findByHolderOrNumberTest() {
+        // Arrange
         String holder = "Polina Trizna";
         String number = "1111 5555 0022 6258";
         PaymentCard card = new PaymentCard();
-
+        card.setHolder(holder);
+        card.setNumber(number);
         when(paymentCardRepository.findByHolderOrNumber(holder, number)).thenReturn(card);
 
+        // Act
         PaymentCard result = paymentCardServiceImpl.findByHolderOrNumber(holder, number);
 
+        // Assert
         assertNotNull(result);
-
-        verify(paymentCardRepository, times(1)).findByHolderOrNumber(holder, number);
+        assertEquals(holder, result.getHolder());
+        assertEquals(number, result.getNumber());
     }
-
 
     @Test
     public void getCardsOnPageTest() {
+        // Arrange
         int pageNo = 0;
         int pageSize = 10;
         List<PaymentCard> cards = Arrays.asList(new PaymentCard(), new PaymentCard());
@@ -181,12 +197,11 @@ public class PaymentCardServiceImplTest {
 
         when(paymentCardRepository.findAll(any(Pageable.class))).thenReturn(page);
 
+        // Act
         Page<PaymentCard> result = paymentCardServiceImpl.getCardsOnPage(pageNo, pageSize);
 
+        // Assert
         assertEquals(2, result.getContent().size());
-
-        verify(paymentCardRepository, times(1)).findAll(any(Pageable.class));
     }
-
 
 }

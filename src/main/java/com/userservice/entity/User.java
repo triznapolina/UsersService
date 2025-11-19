@@ -2,10 +2,7 @@ package com.userservice.entity;
 
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -21,7 +18,7 @@ public class User extends AuditFieldsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "surname")
