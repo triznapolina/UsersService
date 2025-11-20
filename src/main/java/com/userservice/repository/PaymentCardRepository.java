@@ -22,4 +22,5 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
     int setStatusOfActivity(@Param("cardId") Long cardId, @Param("active") boolean active);
 
 
+    boolean existsPaymentCardByNumber(String number);
 }

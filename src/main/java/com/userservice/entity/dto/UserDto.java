@@ -26,6 +26,4 @@ public class UserDto {
 
     @NotNull(message = "You must specify the date of birth")
     private LocalDate birthDate;
-
-
 }
