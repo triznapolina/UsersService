@@ -1,6 +1,5 @@
 package com.userservice.controller;
 
-
 import com.userservice.exception.AlreadyExistsException;
 import com.userservice.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;

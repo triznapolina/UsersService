@@ -11,6 +11,9 @@ import com.userservice.repository.PaymentCardRepository;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.PaymentCardService;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +62,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CachePut(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDto updateCard(PaymentCardDto paymentCardDTO, long id) {
 
@@ -75,12 +82,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
 
     @Transactional
+    @CacheEvict(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public void deleteCard(long id) {
         paymentCardRepository.deleteById(id);
     }
 
     @Transactional
+    @Cacheable(
+            value = "card",
+            key = "#id"
+    )
     @Override
     public PaymentCardDto findById(Long id) {
         return paymentCardMapper.convertToDTO(paymentCardRepository.findById(id).orElseThrow(()
@@ -88,12 +103,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Transactional
+    @CachePut(
+            value = "user",
+            key = "#id"
+    )
     @Override
-    public void activateDeactivatePaymentCard(Long Id, boolean active) {
-        paymentCardRepository.setStatusOfActivity(Id, active);
+    public void activateDeactivatePaymentCard(Long id, boolean active) {
+        paymentCardRepository.setStatusOfActivity(id, active);
     }
 
     @Transactional
+    @Cacheable(
+            value = "card",
+            key = "#user.id"
+    )
     @Override
     public List<PaymentCard> findAllByUser(User user) {
 

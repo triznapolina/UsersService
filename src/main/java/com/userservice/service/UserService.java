@@ -24,4 +24,5 @@ public interface UserService {
 
     Page<User> getUsersOnPage(int pageNo, int pageSize);
 
+
 }

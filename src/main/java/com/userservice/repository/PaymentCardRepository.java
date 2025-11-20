@@ -23,4 +23,6 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> 
 
 
     boolean existsPaymentCardByNumber(String number);
+
+
 }

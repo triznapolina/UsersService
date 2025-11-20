@@ -9,6 +9,9 @@ import com.userservice.mapper.UserMapper;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.UserService;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,20 +36,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @Override
-    public UserDto createUser(UserDto userDTO) {
 
-        if (userRepository.existsUserByEmail((userDTO.getEmail()))) {
-            throw new AlreadyExistsException("User with email=" + userDTO.getEmail() + " is already exists");
+    @CachePut(
+            value= "user",
+            key= "#result.id")
+    @Override
+    public UserDto createUser(UserDto userDto) {
+
+        if (userRepository.existsUserByEmail((userDto.getEmail()))) {
+            throw new AlreadyExistsException("User with email=" + userDto.getEmail() + " is already exists");
         }
 
-        User user = userMapper.convertToEntity(userDTO);
+        User user = userMapper.convertToEntity(userDto);
+        user.setFirstName(userDto.getFirstName());
+        user.setSurname(userDto.getSurname());
+        user.setEmail(userDto.getEmail());
+        user.setBirthDate(userDto.getBirthDate());
         user.setActive(true);
         user = userRepository.save(user);
         return userMapper.convertToDTO(user);
     }
 
     @Transactional
+
+    @CachePut(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public UserDto updateUser(UserDto userDTO, Long id) {
         User user = userRepository.findById(id)
@@ -62,6 +78,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
+    @CacheEvict(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public void deleteUser(Long id) {
         User choosenUser = userRepository.findById(id).orElseThrow(() ->
@@ -77,6 +97,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @Cacheable(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public UserDto getUserById(Long id) {
         return userMapper.convertToDTO(userRepository.findById(id).orElseThrow(()
@@ -85,6 +109,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
+    @CachePut(
+            value = "user",
+            key = "#id"
+    )
     @Override
     public void activateDeactivateUser(Long id, boolean active) {
         userRepository.setStatusOfActivity(id, active);

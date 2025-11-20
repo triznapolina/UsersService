@@ -4,13 +4,12 @@ package com.userservice.service;
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.User;
 import com.userservice.entity.dto.PaymentCardDto;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface PaymentCardService {
+
 
 
     PaymentCardDto createCard(PaymentCardDto paymentCardDTO, long userId);
@@ -31,4 +30,5 @@ public interface PaymentCardService {
     Page<PaymentCard> getCardsOnPage(int pageNo, int pageSize);
 
     boolean findByNumber( String number);
+
 }
