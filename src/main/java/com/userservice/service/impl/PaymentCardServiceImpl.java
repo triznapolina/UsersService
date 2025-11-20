@@ -11,7 +11,6 @@ import com.userservice.repository.PaymentCardRepository;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.PaymentCardService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;

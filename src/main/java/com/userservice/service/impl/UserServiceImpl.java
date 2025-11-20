@@ -36,9 +36,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+
     @CachePut(
             value= "user",
-            key= "#userDto.id")
+            key= "#result.id")
     @Override
     public UserDto createUser(UserDto userDto) {
 
@@ -47,12 +48,17 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.convertToEntity(userDto);
+        user.setFirstName(userDto.getFirstName());
+        user.setSurname(userDto.getSurname());
+        user.setEmail(userDto.getEmail());
+        user.setBirthDate(userDto.getBirthDate());
         user.setActive(true);
         user = userRepository.save(user);
         return userMapper.convertToDTO(user);
     }
 
     @Transactional
+
     @CachePut(
             value = "user",
             key = "#id"
