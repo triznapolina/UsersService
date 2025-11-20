@@ -4,17 +4,19 @@ services:
       context: .
     container_name: service
     ports:
-      - "8080:8080"
+      - "8084:8084"
     restart: always
     depends_on:
-      - db
+      - postgres
       - redis
     environment:
-      - "SPRING_PROFILES_ACTIVE=local"
+      SPRING_PROFILES_ACTIVE: docker
     networks:
       - net
+    env_file:
+      - .env
 
-  db:
+  postgres:
     image: postgres:16
     restart: always
     container_name: db_users
@@ -23,10 +25,10 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: usersDB
-      POSTGRES_URL: jdbc:postgresql://postgres:5432/usersDB
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_LOGIN}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_URL: ${DDB_URL}
     networks:
       - net
 
@@ -36,15 +38,17 @@ services:
     container_name: redis_users
     ports:
       - "6379:6379"
-    networks:
-      - net
     environment:
       REDIS_URL: redis://redis:6379
+    volumes:
+      - redis_data:/var/lib/redis/data
+    networks:
+      - net
 
 networks:
   net:
     driver: bridge
 
-
 volumes:
-  db_data: {}
+  db_data:
+  redis_data:
