@@ -18,7 +18,7 @@ public interface PaymentCardService {
 
     void deleteCard(long id);
 
-    PaymentCardDto findById(Long id);
+    PaymentCard findById(Long id);
 
 
     void activateDeactivatePaymentCard(Long Id, boolean active);

@@ -16,7 +16,7 @@ public interface UserService {
 
     boolean findByEmail(String email);
 
-    UserDto getUserById(Long id);
+    User getUserById(Long id);
 
     void activateDeactivateUser(Long id, boolean active);
 

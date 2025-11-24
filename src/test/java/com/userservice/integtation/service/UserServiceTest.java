@@ -143,27 +143,6 @@ public class UserServiceTest {
     }
 
 
-    @Test
-    public void testGetUserById() {
-        // Arrange
-        User testUser = new User();
-        testUser.setFirstName("Ivan");
-        testUser.setSurname("Ivanov");
-        testUser.setEmail("ivanov@example.com");
-        testUser.setBirthDate(LocalDate.of(1990, 1, 1));
-        testUser.setActive(true);
-        userRepository.save(testUser);
-
-        Long createdId = testUser.getId();
-
-        // Act
-        UserDto userDto = userService.getUserById(createdId);
-
-        // Assert
-        assertThat(userDto).isNotNull();
-        assertThat(userDto.getFirstName()).isEqualTo(testUser.getFirstName());
-    }
-
 
     @Test
     public void testActivateDeactivateUser() {

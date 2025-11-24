@@ -2,13 +2,17 @@ package com.userservice.controller;
 
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.dto.PaymentCardDto;
+import com.userservice.entity.dto.UserInfoResponse;
 import com.userservice.exception.AlreadyExistsException;
 import com.userservice.service.PaymentCardService;
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 
 @RestController
@@ -20,7 +24,6 @@ public class PaymentCardController {
     public PaymentCardController (PaymentCardService paymentCardService) {
         this.paymentCardService = paymentCardService;
     }
-
 
     @PostMapping("/user/{userId}")
     public ResponseEntity<PaymentCardDto> createCard(@Valid @RequestBody PaymentCardDto paymentCardDTO,
@@ -37,11 +40,6 @@ public class PaymentCardController {
     @PutMapping("/{id}")
     public ResponseEntity<PaymentCardDto> updateCard(@Valid @RequestBody PaymentCardDto paymentCardDTO,
                                                      @PathVariable Long id) {
-
-        if (paymentCardService.findByNumber(paymentCardDTO.getNumber())) {
-            throw new AlreadyExistsException("Card with number=" + paymentCardDTO.getNumber() + " is already exists");
-        }
-
         PaymentCardDto updatedCard = paymentCardService.updateCard(paymentCardDTO, id);
         return ResponseEntity.ok(updatedCard);
     }
@@ -53,8 +51,9 @@ public class PaymentCardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentCardDto> getCardById(@PathVariable Long id) {
-        PaymentCardDto card = paymentCardService.findById(id);
+    public ResponseEntity<PaymentCard> getCardById(@PathVariable Long id) {
+
+        PaymentCard card = paymentCardService.findById(id);
         return ResponseEntity.ok(card);
     }
 
@@ -78,7 +77,5 @@ public class PaymentCardController {
         PaymentCard card = paymentCardService.findByHolderOrNumber(holder, number);
         return ResponseEntity.ok(card);
     }
-
-
 
 }
