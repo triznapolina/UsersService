@@ -22,7 +22,7 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
-                  name: first_name
+                  name: firstName
                   type: varchar(20)
                   constraints:
                     nullable: false
@@ -71,6 +71,6 @@ databaseChangeLog:
             tableName: users
             columns:
               - column:
-                  name: first_name
+                  name: firstName
               - column:
                   name: surname

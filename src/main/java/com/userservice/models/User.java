@@ -1,24 +1,19 @@
-package com.userservice.entity;
+package com.userservice.models;
 
 import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class User extends AuditFieldsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name")
+    @Column(name = "firstName")
     private String firstName;
 
     @Column(name = "surname")
