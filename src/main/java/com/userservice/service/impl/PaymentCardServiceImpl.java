@@ -97,9 +97,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             key = "#id"
     )
     @Override
-    public PaymentCardDto findById(Long id) {
-        return paymentCardMapper.convertToDTO(paymentCardRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Card with id="+ id + " is not found")));
+    public PaymentCard findById(Long id) {
+        return paymentCardRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Card with id="+ id + " is not found"));
     }
 
     @Transactional

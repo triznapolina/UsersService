@@ -125,12 +125,10 @@ public class PaymentCardServiceImplTest {
         // Arrange
         Long id = 1L;
         PaymentCard card = new PaymentCard();
-        PaymentCardDto dto = new PaymentCardDto();
         when(paymentCardRepository.findById(id)).thenReturn(Optional.of(card));
-        when(paymentCardMapper.convertToDTO(card)).thenReturn(dto);
 
         // Act
-        PaymentCardDto result = paymentCardServiceImpl.findById(id);
+        PaymentCard result = paymentCardServiceImpl.findById(id);
 
         // Assert
         assertNotNull(result);

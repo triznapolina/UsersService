@@ -53,8 +53,8 @@ public class PaymentCardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentCardDto> getCardById(@PathVariable Long id) {
-        PaymentCardDto card = paymentCardService.findById(id);
+    public ResponseEntity<PaymentCard> getCardById(@PathVariable Long id) {
+        PaymentCard card = paymentCardService.findById(id);
         return ResponseEntity.ok(card);
     }
 

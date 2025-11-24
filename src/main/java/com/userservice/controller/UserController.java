@@ -22,13 +22,10 @@ public class UserController {
 
     private final UserService userService;
     private final PaymentCardService paymentCardService;
-    private final UserMapper userMapper;
 
-    public UserController (UserService userService, PaymentCardService paymentCardService,
-                           UserMapper userMapper) {
+    public UserController (UserService userService, PaymentCardService paymentCardService) {
         this.userService = userService;
         this.paymentCardService = paymentCardService;
-        this.userMapper = userMapper;
     }
 
 
@@ -63,8 +60,8 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        UserDto user = userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
@@ -95,9 +92,8 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PaymentCard>> getCardsByUser(@PathVariable Long userId) {
 
-        UserDto user = userService.getUserById(userId);
-        User entityUser = userMapper.convertToEntity(user);
-        List<PaymentCard> cards = paymentCardService.findAllByUser(entityUser);
+        User user = userService.getUserById(userId);
+        List<PaymentCard> cards = paymentCardService.findAllByUser(user);
         return ResponseEntity.ok(cards);
 
     }

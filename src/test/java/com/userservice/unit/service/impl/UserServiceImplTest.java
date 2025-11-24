@@ -122,14 +122,11 @@ public class UserServiceImplTest {
         Long id = 1L;
         User user = new User();
         user.setId(id);
-        UserDto userDto = new UserDto();
-        userDto.setId(id);
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
-        when(userMapper.convertToDTO(user)).thenReturn(userDto);
 
         // Act
-        UserDto retrievedUser = userService.getUserById(id);
+        User retrievedUser = userService.getUserById(id);
 
         // Assert
         assertThat(retrievedUser).isNotNull();

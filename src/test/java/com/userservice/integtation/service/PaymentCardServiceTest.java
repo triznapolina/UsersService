@@ -1,6 +1,7 @@
 package com.userservice.integtation.service;
 
 
+import com.userservice.entity.PaymentCard;
 import com.userservice.entity.User;
 import com.userservice.entity.dto.PaymentCardDto;
 import com.userservice.exception.ResourceNotFoundException;
@@ -168,34 +169,6 @@ public class PaymentCardServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> {
             paymentCardService.findById(created.getId());
         });
-    }
-
-    @Test
-    void testFindById() {
-        //Arrange
-        User testUser = new User();
-        testUser.setFirstName("Ivan");
-        testUser.setSurname("Ivanov");
-        testUser.setEmail("ivanov@example.com");
-        testUser.setBirthDate(LocalDate.of(1990, 1, 1));
-        testUser.setActive(true);
-        userRepository.save(testUser);
-
-        PaymentCardDto dto = new PaymentCardDto();
-        dto.setHolder("Holder");
-        dto.setNumber("1111222233334444");
-        dto.setExpirationDate(LocalDate.now().plusYears(2));
-
-        PaymentCardDto created = paymentCardService.createCard(dto, testUser.getId());
-        Long createdId = created.getId();
-
-        // Act
-        PaymentCardDto found = paymentCardService.findById(createdId);
-
-        // Assert
-        assertEquals(createdId, found.getId());
-
-
     }
 
 

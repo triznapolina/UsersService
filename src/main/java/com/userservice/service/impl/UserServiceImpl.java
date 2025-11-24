@@ -102,9 +102,9 @@ public class UserServiceImpl implements UserService {
             key = "#id"
     )
     @Override
-    public UserDto getUserById(Long id) {
-        return userMapper.convertToDTO(userRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("User with id="+ id + " is not found")));
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("User with id="+ id + " is not found"));
     }
 
 
