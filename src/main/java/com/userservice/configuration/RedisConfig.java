@@ -36,7 +36,6 @@ public class RedisConfig {
 
         RedisCacheConfiguration cardCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(jacksonSerializer(PaymentCard.class)));
 

@@ -108,8 +108,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             key = "#id"
     )
     @Override
-    public void activateDeactivatePaymentCard(Long id, boolean active) {
+    public PaymentCard activateDeactivatePaymentCard(Long id, boolean active) {
         paymentCardRepository.setStatusOfActivity(id, active);
+        return paymentCardRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Card not found with id: " + id));
     }
 
     @Transactional

@@ -21,7 +21,7 @@ public interface PaymentCardService {
     PaymentCard findById(Long id);
 
 
-    void activateDeactivatePaymentCard(Long Id, boolean active);
+    PaymentCard activateDeactivatePaymentCard(Long Id, boolean active);
 
     List<PaymentCard> findAllByUser(User user);
 

@@ -1,6 +1,7 @@
 package com.userservice.controller;
 
 import com.userservice.entity.PaymentCard;
+import com.userservice.entity.User;
 import com.userservice.entity.dto.PaymentCardDto;
 import com.userservice.exception.AlreadyExistsException;
 import com.userservice.service.PaymentCardService;
@@ -54,10 +55,10 @@ public class PaymentCardController {
     }
 
     @PutMapping("/{id}/activate")
-    public ResponseEntity<Void> activateDeactivatePaymentCard(@PathVariable Long id,
+    public ResponseEntity<PaymentCard> activateDeactivatePaymentCard(@PathVariable Long id,
                                                               @RequestParam boolean active) {
-        paymentCardService.activateDeactivatePaymentCard(id, active);
-        return ResponseEntity.ok().build();
+        PaymentCard updatedCard = paymentCardService.activateDeactivatePaymentCard(id, active);
+        return ResponseEntity.ok(updatedCard);
     }
 
     @GetMapping("/all")

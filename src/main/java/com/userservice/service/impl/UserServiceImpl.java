@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -114,8 +115,10 @@ public class UserServiceImpl implements UserService {
             key = "#id"
     )
     @Override
-    public void activateDeactivateUser(Long id, boolean active) {
+    public User activateDeactivateUser(Long id, boolean active) {
         userRepository.setStatusOfActivity(id, active);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     @Transactional

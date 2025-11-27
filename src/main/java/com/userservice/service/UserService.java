@@ -18,7 +18,7 @@ public interface UserService {
 
     User getUserById(Long id);
 
-    void activateDeactivateUser(Long id, boolean active);
+    User activateDeactivateUser(Long id, boolean active);
 
     Page<User> findUsers(String firstName, String surname, Pageable pageable);
 

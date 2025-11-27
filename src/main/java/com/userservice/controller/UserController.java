@@ -66,10 +66,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/activate")
-    public ResponseEntity<Void> activateDeactivateUser(@PathVariable Long id,
+    public ResponseEntity<User> activateDeactivateUser(@PathVariable Long id,
                                                        @RequestParam boolean active) {
-        userService.activateDeactivateUser(id, active);
-        return ResponseEntity.ok().build();
+        User updatedUser = userService.activateDeactivateUser(id, active);
+        return ResponseEntity.ok(updatedUser);
     }
 
 
