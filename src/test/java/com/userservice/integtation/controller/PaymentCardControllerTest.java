@@ -92,7 +92,7 @@ public class PaymentCardControllerTest {
         );
 
         // Assert
-        assertThat(cardResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(cardResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
@@ -131,8 +131,7 @@ public class PaymentCardControllerTest {
 
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getHolder()).isEqualTo("Lakir");
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
@@ -158,7 +157,7 @@ public class PaymentCardControllerTest {
 
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
 

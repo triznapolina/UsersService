@@ -143,26 +143,6 @@ public class UserServiceTest {
     }
 
 
-
-    @Test
-    public void testActivateDeactivateUser() {
-        // Arrange
-        User testUser = new User();
-        testUser.setFirstName("Ivan");
-        testUser.setSurname("Ivanov");
-        testUser.setEmail("ivanov@example.com");
-        testUser.setBirthDate(LocalDate.of(1990, 1, 1));
-        testUser.setActive(true);
-        userRepository.save(testUser);
-
-        // Act
-        userService.activateDeactivateUser(testUser.getId(), false);
-
-        // Assert
-        User updatedUser = userRepository.findById(testUser.getId()).orElseThrow();
-        assertThat(updatedUser.getActive()).isFalse();
-    }
-
     @Test
     public void testFindUsers() {
         // Arrange

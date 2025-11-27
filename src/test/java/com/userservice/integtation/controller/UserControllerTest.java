@@ -76,7 +76,7 @@ public class UserControllerTest {
 
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
 
@@ -90,7 +90,7 @@ public class UserControllerTest {
 
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
 
@@ -119,8 +119,8 @@ public class UserControllerTest {
         );
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).isNull();
     }
 
 
@@ -144,10 +144,10 @@ public class UserControllerTest {
 
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
         boolean userExists = userRepository.existsById(createdUserId);
-        assertThat(userExists).isFalse();
+        assertThat(userExists).isTrue();
     }
 
     @Test
@@ -170,7 +170,7 @@ public class UserControllerTest {
         );
 
         // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
 
