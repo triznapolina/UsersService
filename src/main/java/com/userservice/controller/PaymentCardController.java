@@ -2,17 +2,13 @@ package com.userservice.controller;
 
 import com.userservice.entity.PaymentCard;
 import com.userservice.entity.dto.PaymentCardDto;
-import com.userservice.entity.dto.UserInfoResponse;
 import com.userservice.exception.AlreadyExistsException;
 import com.userservice.service.PaymentCardService;
-import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 
 @RestController

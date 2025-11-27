@@ -1,82 +1,49 @@
 package com.userservice.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.cache.annotation.EnableCaching;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.userservice.entity.PaymentCard;
+import com.userservice.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
-import java.util.Objects;
 
 @Configuration
-@EnableCaching
 public class RedisConfig {
 
-    private final Environment env;
-    private final ObjectMapper objectMapper;
+    private <T> Jackson2JsonRedisSerializer<T> jacksonSerializer(Class<T> clazz) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-
-    public RedisConfig(Environment env, ObjectMapper objectMapper) {
-        this.env = env;
-        this.objectMapper = objectMapper;
-    }
-
-
-    @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisConf = new RedisStandaloneConfiguration();
-        redisConf.setHostName(Objects.requireNonNull(
-                env.getProperty("REDIS_HOST", "localhost")));
-        redisConf.setPort(Integer.parseInt(Objects.requireNonNull(
-                env.getProperty("REDIS_PORT", "6379"))));
-        return new LettuceConnectionFactory(redisConf);
-    }
-
-
-    @Bean
-    public RedisCacheConfiguration cacheConfiguration() {
-
-        var jsonSerializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
-
-        return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(600))
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer));
+        return new Jackson2JsonRedisSerializer<>(objectMapper, clazz);
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisProductTemplate(RedisConnectionFactory redisConnectionFactory,
-                                                              ObjectMapper objectMapper) {
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration userCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(jacksonSerializer(User.class)));
 
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        RedisCacheConfiguration cardCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(jacksonSerializer(PaymentCard.class)));
 
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-
-        var serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
-        redisTemplate.setValueSerializer(serializer);
-
-        redisTemplate.afterPropertiesSet();
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisCacheManager cacheManager() {
-        return RedisCacheManager.builder(redisConnectionFactory())
-                .cacheDefaults(cacheConfiguration())
-                .transactionAware()
+        return RedisCacheManager
+                .builder(connectionFactory)
+                .withCacheConfiguration("user", userCacheConfiguration)
+                .withCacheConfiguration("card", cardCacheConfiguration)
                 .build();
     }
-
 }

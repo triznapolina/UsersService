@@ -4,6 +4,7 @@ import com.userservice.auditJPA.AuditFieldsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
