@@ -104,7 +104,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Transactional
     @CachePut(
-            value = "user",
+            value = "card",
             key = "#id"
     )
     @Override
