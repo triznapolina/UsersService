@@ -24,5 +24,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     boolean existsUserByEmail(String email);
 
-
+    User getUserByEmail(String email);
 }

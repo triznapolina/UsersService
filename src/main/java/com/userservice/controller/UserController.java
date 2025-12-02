@@ -65,6 +65,16 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+
+    @GetMapping("/{email}")
+    public ResponseEntity<User> getUserById(@PathVariable String email) {
+
+        User user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
+
+
     @PutMapping("/{id}/activate")
     public ResponseEntity<User> activateDeactivateUser(@PathVariable Long id,
                                                        @RequestParam boolean active) {
